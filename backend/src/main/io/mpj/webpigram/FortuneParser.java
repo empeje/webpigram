@@ -88,7 +88,7 @@ public class FortuneParser {
                 String fortune = new String(fortuneBytes);
                 
                 // Handle ROT13 if the flag is set
-                if ((header.flags & 0x2) != 0) {
+                if (header.flags == 4) {
                     fortune = rot13(fortune);
                 }
                 
@@ -112,8 +112,8 @@ public class FortuneParser {
 
     public static void main(String[] args) {
         // Update these paths to match your system
-        String fortuneFile = "/something/fortunes/kids";
-        String datFile = "/something/fortunes/kids.dat";
+        String fortuneFile = "/Users/abdurrachmanmappuji/Development/webpigram/Fortune-OSX/fortunes/kids";
+        String datFile = "/Users/abdurrachmanmappuji/Development/webpigram/Fortune-OSX/fortunes/kids.dat";
         
         try {
             String fortune = getFortune(fortuneFile, datFile);
