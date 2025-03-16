@@ -8,6 +8,7 @@ import java.util.Random;
 
 
 
+@SuppressWarnings("unused")
 public class FortuneParser {
     // Structure matching the C STRFILE header
     private static class StrFileHeader {
