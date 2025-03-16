@@ -7,8 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.common.collect.ImmutableList;
 import io.mpj.webpigram.WebpigramApplication;
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,24 +22,23 @@ import org.springframework.test.web.servlet.MockMvc;
 final class FeedsControllerTest {
 
   @MockitoBean private FeedsService feedsService;
-  @MockitoBean private Clock clock;
   @Autowired private MockMvc mockMvc;
 
   @Test
   @DisplayName("Should return feed content when GET /feeds is called")
   void shouldReturnFeedContent() throws Exception {
     // Given
-    when(clock.instant()).thenReturn(Instant.parse("2025-03-16T21:41:50.873015Z"));
     when(feedsService.getFeeds())
         .thenReturn(
-            ImmutableList.of(new Feeds(
-                1,
-                "Hello",
-                "John Doe",
-                10,
-                5,
-                LocalDateTime.parse("2025-03-16T21:41:50.873015"),
-                ImmutableList.of("Java", "Python", "C++"))));
+            ImmutableList.of(
+                new Feeds(
+                    1,
+                    "Hello",
+                    "John Doe",
+                    10,
+                    5,
+                    LocalDateTime.parse("2025-03-16T21:41:50.873015"),
+                    ImmutableList.of("Java", "Python", "C++"))));
 
     // When & Then
     var expectedResponse =

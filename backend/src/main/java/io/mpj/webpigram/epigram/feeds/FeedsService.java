@@ -1,26 +1,17 @@
 package io.mpj.webpigram.epigram.feeds;
 
 import com.google.common.collect.ImmutableList;
-import java.time.Clock;
-import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FeedsService {
-  private final Clock clock;
+  private final EpigramRepository epigramRepository;
 
-  public FeedsService(Clock clock) {
-    this.clock = clock;
+  public FeedsService(EpigramRepository epigramRepository) {
+    this.epigramRepository = epigramRepository;
   }
 
   public ImmutableList<Feeds> getFeeds() {
-    return ImmutableList.of(new Feeds(
-        1,
-        "Hello",
-        "John Doe",
-        10,
-        5,
-        LocalDateTime.from(clock.instant()),
-        ImmutableList.of("Java", "Python", "C++")));
+    return epigramRepository.getFeeds();
   }
 }
