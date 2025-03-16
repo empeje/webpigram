@@ -4,9 +4,8 @@ import com.google.common.collect.ImmutableList;
 import io.mpj.webpigram.db.postgres.Tables;
 import io.mpj.webpigram.db.postgres.tables.records.EpigramTopicRecord;
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-
+import java.time.ZoneId;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
@@ -60,7 +59,7 @@ public class EpigramRepository {
     epigramRecord.setAuthor(author);
     epigramRecord.setUpVotes(0L);
     epigramRecord.setDownVotes(0L);
-    epigramRecord.setCreatedAt(OffsetDateTime.from(LocalDateTime.now(clock)));
+    epigramRecord.setCreatedAt(OffsetDateTime.from(clock.instant().atZone(ZoneId.systemDefault())));
     epigramRecord.store();
 
     // Insert the topics

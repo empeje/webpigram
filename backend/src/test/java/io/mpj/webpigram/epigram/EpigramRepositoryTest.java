@@ -1,4 +1,3 @@
 package io.mpj.webpigram.epigram;
 
-public class EpigramRepositoryTest {
-}
+public class EpigramRepositoryTest {}
