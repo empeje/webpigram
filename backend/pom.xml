@@ -30,10 +30,12 @@
         <assertj.version>3.27.3</assertj.version>
         <checkstyle.version>10.16.0</checkstyle.version>
         <error-prone.version>2.36.0</error-prone.version>
+        <flyway-maven-plugin.version>3.0</flyway-maven-plugin.version>
         <fmt-maven-plugin.version>2.21.1</fmt-maven-plugin.version>
         <guava.version>33.4.0-jre</guava.version>
         <h2.version>2.3.232</h2.version>
         <java.version>23</java.version>
+        <jooq.version>3.20.2</jooq.version>
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <nullaway.version>0.12.4</nullaway.version>
@@ -49,7 +51,6 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-        <!-- Database Dependencies -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -62,6 +63,12 @@
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!-- Database Dependencies -->
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooq.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -205,6 +212,84 @@
                         together with other annotation processors' below. -->
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <!-- Flyway plugin -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway-maven-plugin.version}</version>
+
+                <!-- Note that we need to prefix the db/migration path with filesystem: to prevent Flyway
+                     from looking for our migration scripts only on the classpath -->
+                <configuration>
+                    <url>${env.DATABASE_URL}</url>
+                    <user>${env.DATABASE_USERNAME}</user>
+                    <password>${env.DATABASE_PASSWORD}</password>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+
+                <!-- Note that we're executing the Flyway plugin in the "generate-sources" phase -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JOOQ plugin -->
+            <plugin>
+                <!-- Use org.jooq                for the Open Source Edition
+                         org.jooq.pro            for commercial editions with Java 21 support,
+                         org.jooq.pro-java-17    for commercial editions with Java 17 support,
+                         org.jooq.pro-java-11    for commercial editions with Java 11 support,
+                         org.jooq.pro-java-8     for commercial editions with Java 8 support,
+                         org.jooq.trial          for the free trial edition with Java 21 support,
+                         org.jooq.trial-java-17  for the free trial edition with Java 17 support,
+                         org.jooq.trial-java-11  for the free trial edition with Java 11 support,
+                         org.jooq.trial-java-8   for the free trial edition with Java 8 support
+
+                 Note: Only the Open Source Edition is hosted on Maven Central.
+                       Install the others locally using the provided scripts, or access them from here: https://repo.jooq.org
+                       See the JDK version support matrix here: https://www.jooq.org/download/support-matrix-jdk -->
+
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>${jooq.version}</version>
+
+                <!-- This is a minimal working configuration. See the manual's section about the code generator for more details -->
+                <configuration>
+                    <jdbc>
+                        <url>${env.DATABASE_URL}</url>
+                        <user>${env.DATABASE_USERNAME}</user>
+                        <password>${env.DATABASE_PASSWORD}</password>
+                    </jdbc>
+                    <generator>
+                        <database>
+                            <includes>.*</includes>
+                            <inputSchema>public</inputSchema>
+                        </database>
+                        <target>
+                            <packageName>io.mpj.webpigram.db.postgres</packageName>
+                            <directory>target/generated-sources/jooq-postgres</directory>
+                        </target>
+                    </generator>
+                </configuration>
+
+                <!-- The jOOQ code generation plugin is also executed in the generate-sources phase, prior to compilation -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
