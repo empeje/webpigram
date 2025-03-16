@@ -1,5 +1,6 @@
 package io.mpj.webpigram.epigram.feeds;
 
+import com.google.common.collect.ImmutableList;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,7 +13,7 @@ public class FeedsController {
   }
 
   @GetMapping("/feeds")
-  public Feeds getFeeds() {
+  public ImmutableList<Feeds> getFeeds() {
     return feedsService.getFeeds();
   }
 }

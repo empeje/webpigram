@@ -13,14 +13,14 @@ public class FeedsService {
     this.clock = clock;
   }
 
-  public Feeds getFeeds() {
-    return new Feeds(
+  public ImmutableList<Feeds> getFeeds() {
+    return ImmutableList.of(new Feeds(
         1,
         "Hello",
         "John Doe",
         10,
         5,
         LocalDateTime.from(clock.instant()),
-        ImmutableList.of("Java", "Python", "C++"));
+        ImmutableList.of("Java", "Python", "C++")));
   }
 }
