@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FeedsController {
-    @GetMapping("/feeds")
-    public String getFeeds() {
-        return "Hello";
-    }
+  @GetMapping("/feeds")
+  public String getFeeds() {
+    return "Hello";
+  }
 }
