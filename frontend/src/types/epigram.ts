@@ -5,4 +5,5 @@ export interface Epigram {
   upvotes: number;
   downvotes: number;
   createdAt: string;
+  topics: string[];
 } 

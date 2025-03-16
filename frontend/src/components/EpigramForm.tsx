@@ -18,6 +18,7 @@ import { Epigram } from "@/types/epigram";
 const formSchema = z.object({
   content: z.string().min(1, "Content is required"),
   author: z.string().min(1, "Author is required"),
+  topics: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -34,16 +35,23 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
     defaultValues: {
       content: "",
       author: "",
+      topics: "",
     },
   });
 
   const handleSubmit = (values: FormValues) => {
     setIsSubmitting(true);
     
+    // Process topics from comma-separated string to array
+    const topicsArray = values.topics 
+      ? values.topics.split(',').map(topic => topic.trim()).filter(Boolean)
+      : [];
+    
     // Create a new epigram object
     const newEpigram = {
       content: values.content,
       author: values.author,
+      topics: topicsArray,
     };
     
     // Call the onSubmit callback
@@ -83,6 +91,20 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
               <FormLabel>Author</FormLabel>
               <FormControl>
                 <Input placeholder="Author name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="topics"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Topics</FormLabel>
+              <FormControl>
+                <Input placeholder="Programming, Variables, etc. (comma-separated)" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

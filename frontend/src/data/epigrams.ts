@@ -8,6 +8,7 @@ export const epigrams: Epigram[] = [
     upvotes: 42,
     downvotes: 5,
     createdAt: "2023-01-15T12:00:00Z",
+    topics: ["Programming", "Variables"],
   },
   {
     id: "2",
@@ -16,6 +17,7 @@ export const epigrams: Epigram[] = [
     upvotes: 38,
     downvotes: 3,
     createdAt: "2023-02-20T14:30:00Z",
+    topics: ["Functions", "Data Structures", "Programming"],
   },
   {
     id: "3",
@@ -24,6 +26,7 @@ export const epigrams: Epigram[] = [
     upvotes: 56,
     downvotes: 12,
     createdAt: "2023-03-10T09:15:00Z",
+    topics: ["Syntax", "Programming Languages"],
   },
   {
     id: "4",
@@ -32,6 +35,7 @@ export const epigrams: Epigram[] = [
     upvotes: 67,
     downvotes: 2,
     createdAt: "2023-04-05T16:45:00Z",
+    topics: ["Software Design", "Programming Philosophy"],
   },
   {
     id: "5",
@@ -40,5 +44,6 @@ export const epigrams: Epigram[] = [
     upvotes: 29,
     downvotes: 8,
     createdAt: "2023-05-12T11:20:00Z",
+    topics: ["Software Development", "Software Lifecycle"],
   },
 ]; 
