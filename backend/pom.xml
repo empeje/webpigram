@@ -27,9 +27,11 @@
         <url/>
     </scm>
     <properties>
+        <assertj.version>3.27.3</assertj.version>
         <checkstyle.version>10.16.0</checkstyle.version>
         <error-prone.version>2.36.0</error-prone.version>
         <fmt-maven-plugin.version>2.21.1</fmt-maven-plugin.version>
+        <guava.version>33.4.0-jre</guava.version>
         <h2.version>2.3.232</h2.version>
         <java.version>23</java.version>
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
@@ -41,12 +43,24 @@
         <spring-session.version>3.4.2</spring-session.version>
     </properties>
     <dependencies>
-
+        <!-- Utilities Dependencies -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
         <!-- Database Dependencies -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

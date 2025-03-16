@@ -5,8 +5,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FeedsController {
+  private final FeedsService feedsService;
+
+  public FeedsController(FeedsService feedsService) {
+    this.feedsService = feedsService;
+  }
+
   @GetMapping("/feeds")
-  public String getFeeds() {
-    return "Hello";
+  public Feeds getFeeds() {
+    return feedsService.getFeeds();
   }
 }
