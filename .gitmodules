@@ -1,0 +1,3 @@
+[submodule "Fortune-OSX"]
+	path = Fortune-OSX
+	url = git@github.com:empeje/Fortune-OSX.git
