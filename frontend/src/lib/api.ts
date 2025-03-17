@@ -87,4 +87,38 @@ export async function fetchRandomEpigram(): Promise<Epigram> {
     console.error("Failed to fetch random epigram:", error);
     throw error;
   }
+}
+
+export interface SubmitEpigramRequest {
+  content: string;
+  author: string;
+  topics: string[];
+  recaptchaToken: string;
+}
+
+export interface SubmitEpigramResponse {
+  id: number;
+  message: string;
+}
+
+export async function submitEpigram(data: SubmitEpigramRequest): Promise<SubmitEpigramResponse> {
+  try {
+    const response = await fetch('/api/epigram/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Error submitting epigram: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to submit epigram:", error);
+    throw error;
+  }
 } 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Epigram } from "@/types/epigram";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+
+// Define the global grecaptcha type
+declare global {
+  interface Window {
+    grecaptcha: {
+      enterprise: {
+        ready: (callback: () => void) => void;
+        execute: (siteKey: string, options: { action: string }) => Promise<string>;
+      };
+    };
+  }
+}
 
 const formSchema = z.object({
   content: z.string().min(1, "Content is required"),
@@ -29,6 +43,36 @@ interface EpigramFormProps {
 
 export function EpigramForm({ onSubmit }: EpigramFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+
+  // Load reCAPTCHA script
+  useEffect(() => {
+    // Skip if already loaded or no site key
+    if (window.grecaptcha || !siteKey || document.querySelector('script[src*="recaptcha/enterprise.js"]')) {
+      setRecaptchaLoaded(true);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/enterprise.js?render=${siteKey}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      setRecaptchaLoaded(true);
+    };
+    script.onerror = () => {
+      setError("Failed to load reCAPTCHA");
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup if component unmounts
+      document.head.removeChild(script);
+    };
+  }, [siteKey]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -39,32 +83,79 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
     },
   });
 
-  const handleSubmit = (values: FormValues) => {
+  const executeRecaptcha = async (): Promise<string | null> => {
+    if (!recaptchaLoaded || !window.grecaptcha?.enterprise) {
+      setError("reCAPTCHA is not loaded yet. Please try again.");
+      return null;
+    }
+
+    try {
+      return await new Promise((resolve, reject) => {
+        window.grecaptcha.enterprise.ready(async () => {
+          try {
+            const token = await window.grecaptcha.enterprise.execute(siteKey, {
+              action: 'SUBMIT_EPIGRAM'
+            });
+            resolve(token);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
+      setError("reCAPTCHA verification failed. Please try again.");
+      return null;
+    }
+  };
+
+  const handleSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
+    setError(null);
     
-    // Process topics from comma-separated string to array
-    const topicsArray = values.topics 
-      ? values.topics.split(',').map(topic => topic.trim()).filter(Boolean)
-      : [];
-    
-    // Create a new epigram object
-    const newEpigram = {
-      content: values.content,
-      author: values.author,
-      topics: topicsArray,
-    };
-    
-    // Call the onSubmit callback
-    onSubmit(newEpigram);
-    
-    // Reset the form
-    form.reset();
-    setIsSubmitting(false);
+    try {
+      // Execute reCAPTCHA and get token
+      const token = await executeRecaptcha();
+      if (!token) {
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Process topics from comma-separated string to array
+      const topicsArray = values.topics 
+        ? values.topics.split(',').map(topic => topic.trim()).filter(Boolean)
+        : [];
+      
+      // Create a new epigram object
+      const newEpigram = {
+        content: values.content,
+        author: values.author,
+        topics: topicsArray,
+        recaptchaToken: token,
+      };
+      
+      // Call the onSubmit callback
+      await onSubmit(newEpigram);
+      
+      // Reset the form
+      form.reset();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit epigram");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         <FormField
           control={form.control}
           name="content"
@@ -111,8 +202,8 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
           )}
         />
         
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Adding..." : "Add Epigram"}
+        <Button type="submit" disabled={isSubmitting || !recaptchaLoaded}>
+          {isSubmitting ? "Submitting..." : "Submit Epigram"}
         </Button>
       </form>
     </Form>
