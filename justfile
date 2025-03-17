@@ -21,7 +21,7 @@ dev-backend:
 
 # Run backend with FortuneLoader enabled
 dev-backend-with-fortune:
-    cd backend && ./mvnw spring-boot:run -Dspring-boot.run.arguments="--app.fortune-loader.enabled=true" -Dspring-boot.run.profiles=dev
+    cd backend && ./mvnw spring-boot:run -Dspring-boot.run.arguments="--app.fortune-loader.enabled=true,--server.port=8082" -Dspring-boot.run.profiles=dev
 
 # Run frontend development server
 dev-frontend:

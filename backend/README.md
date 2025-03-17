@@ -1,4 +1,40 @@
-# High-Level Application Features
+# Webpigram Backend
+
+This is the backend component of the Webpigram application. For general project information and setup instructions, please refer to the [main README](../README.md).
+
+## Getting Started
+
+### Prerequisites
+
+- Java 23 or higher
+- Maven
+- PostgreSQL database (can be run using Docker Compose from the root directory)
+
+### Running the Backend
+
+From the root directory, you can use the following commands:
+
+```bash
+# Start the backend in development mode
+just dev-backend
+
+# Start the backend with fortune loader enabled
+just dev-backend-with-fortune
+```
+
+Alternatively, you can run the backend directly:
+
+```bash
+# From the backend directory
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+
+# With fortune loader enabled
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--app.fortune-loader.enabled=true" -Dspring-boot.run.profiles=dev
+```
+
+The backend will be available at http://localhost:8080.
+
+## High-Level Application Features
 
 Webpigram is a web application that allows users to
 - Generate random epigram
@@ -18,9 +54,9 @@ Webpigram is a web application that allows users to
 - Epigram deletion
   - There's a button to report epigrams that are offensive. This reports arrive at the moderation queue
 
-# Application Architecture
+## Application Architecture
 
-## 1. Domain: `epigram`
+### 1. Domain: `epigram`
 
 - Handles core epigram-related features like creation, retrieval, and management.
 
@@ -37,9 +73,7 @@ Webpigram is a web application that allows users to
 - `epigram-feeds`
   - `/feeds` endpoint for combined most popular and recently added epigrams. ✅
 
----
-
-## 2. Domain: `user`
+### 2. Domain: `user`
 
 - Focuses on user interactions like submissions, reporting, and content management.
 
@@ -48,9 +82,7 @@ Webpigram is a web application that allows users to
 - `user-action`
   - User-initiated actions like submitting or reporting epigrams.
 
----
-
-## 3. Domain: `moderation`
+### 3. Domain: `moderation`
 
 - Manages the moderation pipeline.
 
@@ -68,9 +100,7 @@ Webpigram is a web application that allows users to
 - `report-handling`
   - Handle reported epigrams for review in the moderation queue.
 
----
-
-## 4. Domain: `infrastructure`
+### 4. Domain: `infrastructure`
 
 - Manages application infrastructure and tools.
 
@@ -84,8 +114,6 @@ Webpigram is a web application that allows users to
 
 - `captcha`
   - Manages CAPTCHA functionality or development bypass logic.
-
----
 
 ## reCAPTCHA Configuration
 
@@ -140,3 +168,8 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 For development/testing purposes, you can bypass the captcha.
 
 Note: These test keys will always pass verification regardless of user input, but they only work with standard reCAPTCHA, not with Enterprise.
+
+## Additional Documentation
+
+- [Code Quality Tools](README-TOOLS.md) - Information about the code quality tools used in this project
+- [Fortune Loader](src/main/java/io/mpj/webpigram/tools/README.md) - Documentation for the Fortune Loader tool
