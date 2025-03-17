@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { epigrams as initialEpigrams } from "@/data/epigrams";
 import { EpigramCard } from "@/components/EpigramCard";
 import { Layout } from "@/components/Layout";
@@ -9,9 +9,31 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Home, PlusCircle, TrendingUp, User } from "lucide-react";
 import Link from "next/link";
+import { fetchEpigrams } from "@/lib/api";
 
 export default function HomePage() {
-  const [epigrams, setEpigrams] = useState<Epigram[]>(initialEpigrams);
+  const [epigrams, setEpigrams] = useState<Epigram[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getEpigrams = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchEpigrams();
+        setEpigrams(data);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch epigrams:", err);
+        setError("Failed to load epigrams. Using fallback data.");
+        setEpigrams(initialEpigrams); // Fallback to static data
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getEpigrams();
+  }, []);
 
   const handleAddEpigram = (newEpigram: Omit<Epigram, "id" | "upvotes" | "downvotes" | "createdAt">) => {
     const epigramToAdd: Epigram = {
@@ -86,11 +108,21 @@ export default function HomePage() {
             <p className="text-muted-foreground">Wisdom from the world of programming</p>
           </header>
           
-          <div className="space-y-6">
-            {epigrams.map((epigram) => (
-              <EpigramCard key={epigram.id} epigram={epigram} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-10">
+              <p>Loading epigrams...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-10">
+              <p className="text-red-500">{error}</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {epigrams.map((epigram) => (
+                <EpigramCard key={epigram.id} epigram={epigram} />
+              ))}
+            </div>
+          )}
         </div>
         
         {/* Right Sidebar - Trending Topics */}
