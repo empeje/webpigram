@@ -1,4 +1,12 @@
-import { Epigram, EpigramResponse, PagedEpigramResponse } from '@/types/epigram';
+import {
+  Epigram,
+  EpigramResponse,
+  PagedEpigramResponse,
+  InteractionRequest,
+  InteractionResponse,
+  CommentResponse,
+  Comment,
+} from '@/types/epigram';
 
 export async function fetchEpigrams(): Promise<Epigram[]> {
   try {
@@ -146,6 +154,50 @@ export async function fetchEpigramById(id: string): Promise<Epigram | null> {
     };
   } catch (error) {
     console.error('Failed to fetch epigram by ID:', error);
+    throw error;
+  }
+}
+
+/**
+ * Submit an anonymous interaction (upvote, downvote, or comment)
+ */
+export async function submitInteraction(data: InteractionRequest): Promise<InteractionResponse> {
+  try {
+    const response = await fetch('/api/epigram/interaction', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Error submitting interaction: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to submit interaction:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch comments for an epigram
+ */
+export async function fetchComments(epigramId: string): Promise<Comment[]> {
+  try {
+    const response = await fetch(`/api/epigram/interaction/comments/${epigramId}`);
+
+    if (!response.ok) {
+      throw new Error(`Error fetching comments: ${response.status}`);
+    }
+
+    const data: CommentResponse = await response.json();
+    return data.comments;
+  } catch (error) {
+    console.error('Failed to fetch comments:', error);
     throw error;
   }
 }

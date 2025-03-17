@@ -1,13 +1,19 @@
-import { Epigram } from '@/types/epigram';
+import { Epigram, InteractionType } from '@/types/epigram';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { ShareModal } from './ShareModal';
+import { submitInteraction } from '@/lib/api';
+import { useToast } from '@/components/ui/use-toast';
+import { LoadingSpinner } from './LoadingSpinner';
+import { CommentSection } from './CommentSection';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 interface EpigramCardProps {
   epigram: Epigram;
+  showComments?: boolean;
 }
 
 // Helper function to format date
@@ -20,45 +26,122 @@ const formatDate = (dateString: string) => {
   }).format(date);
 };
 
-export function EpigramCard({ epigram }: EpigramCardProps) {
+export function EpigramCard({ epigram, showComments = false }: EpigramCardProps) {
   const [upvotes, setUpvotes] = useState(epigram.upvotes);
   const [downvotes, setDownvotes] = useState(epigram.downvotes);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [showCommentsSection, setShowCommentsSection] = useState(showComments);
+  const [isUpvoting, setIsUpvoting] = useState(false);
+  const [isDownvoting, setIsDownvoting] = useState(false);
+  const { toast } = useToast();
+  const { recaptchaLoaded, executeRecaptcha } = useRecaptcha();
 
-  const handleUpvote = () => {
-    if (hasUpvoted) {
-      setUpvotes(prev => prev - 1);
-      setHasUpvoted(false);
-    } else {
-      setUpvotes(prev => prev + 1);
-      setHasUpvoted(true);
+  const handleUpvote = async () => {
+    if (isUpvoting || isDownvoting) return;
 
-      if (hasDownvoted) {
-        setDownvotes(prev => prev - 1);
-        setHasDownvoted(false);
+    setIsUpvoting(true);
+    try {
+      // If already upvoted, we can't undo it with anonymous interactions
+      if (hasUpvoted) {
+        toast({
+          title: 'Info',
+          description: 'You have already upvoted this epigram',
+        });
+        setIsUpvoting(false);
+        return;
       }
+
+      // Execute reCAPTCHA and get token
+      const token = await executeRecaptcha('INTERACTION');
+      if (!token) {
+        setIsUpvoting(false);
+        return;
+      }
+
+      const response = await submitInteraction({
+        epigramId: parseInt(epigram.id),
+        interactionType: InteractionType.UPVOTE,
+        recaptchaToken: token,
+      });
+
+      if (response.success) {
+        setUpvotes(response.upvotes);
+        setDownvotes(response.downvotes);
+        setHasUpvoted(true);
+
+        // If previously downvoted in this session, update UI state
+        if (hasDownvoted) {
+          setHasDownvoted(false);
+        }
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to upvote',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUpvoting(false);
     }
   };
 
-  const handleDownvote = () => {
-    if (hasDownvoted) {
-      setDownvotes(prev => prev - 1);
-      setHasDownvoted(false);
-    } else {
-      setDownvotes(prev => prev + 1);
-      setHasDownvoted(true);
+  const handleDownvote = async () => {
+    if (isUpvoting || isDownvoting) return;
 
-      if (hasUpvoted) {
-        setUpvotes(prev => prev - 1);
-        setHasUpvoted(false);
+    setIsDownvoting(true);
+    try {
+      // If already downvoted, we can't undo it with anonymous interactions
+      if (hasDownvoted) {
+        toast({
+          title: 'Info',
+          description: 'You have already downvoted this epigram',
+        });
+        setIsDownvoting(false);
+        return;
       }
+
+      // Execute reCAPTCHA and get token
+      const token = await executeRecaptcha('INTERACTION');
+      if (!token) {
+        setIsDownvoting(false);
+        return;
+      }
+
+      const response = await submitInteraction({
+        epigramId: parseInt(epigram.id),
+        interactionType: InteractionType.DOWNVOTE,
+        recaptchaToken: token,
+      });
+
+      if (response.success) {
+        setUpvotes(response.upvotes);
+        setDownvotes(response.downvotes);
+        setHasDownvoted(true);
+
+        // If previously upvoted in this session, update UI state
+        if (hasUpvoted) {
+          setHasUpvoted(false);
+        }
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to downvote',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDownvoting(false);
     }
   };
 
   const handleShare = () => {
     setIsShareModalOpen(true);
+  };
+
+  const toggleComments = () => {
+    setShowCommentsSection(!showCommentsSection);
   };
 
   return (
@@ -100,8 +183,9 @@ export function EpigramCard({ epigram }: EpigramCardProps) {
                 size="sm"
                 className={`h-8 w-8 p-0 rounded-full ${hasUpvoted ? 'text-green-500 bg-green-50' : ''}`}
                 onClick={handleUpvote}
+                disabled={isUpvoting || isDownvoting || !recaptchaLoaded}
               >
-                <ThumbsUp className="h-4 w-4" />
+                {isUpvoting ? <LoadingSpinner size="sm" /> : <ThumbsUp className="h-4 w-4" />}
               </Button>
               <span className="text-sm">{upvotes}</span>
             </div>
@@ -111,15 +195,21 @@ export function EpigramCard({ epigram }: EpigramCardProps) {
                 size="sm"
                 className={`h-8 w-8 p-0 rounded-full ${hasDownvoted ? 'text-red-500 bg-red-50' : ''}`}
                 onClick={handleDownvote}
+                disabled={isUpvoting || isDownvoting || !recaptchaLoaded}
               >
-                <ThumbsDown className="h-4 w-4" />
+                {isDownvoting ? <LoadingSpinner size="sm" /> : <ThumbsDown className="h-4 w-4" />}
               </Button>
               <span className="text-sm">{downvotes}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 rounded-full"
+              onClick={toggleComments}
+            >
               <MessageSquare className="h-4 w-4" />
             </Button>
             <Button
@@ -132,6 +222,12 @@ export function EpigramCard({ epigram }: EpigramCardProps) {
             </Button>
           </div>
         </CardFooter>
+
+        {showCommentsSection && (
+          <div className="px-6 py-4 border-t">
+            <CommentSection epigramId={epigram.id} />
+          </div>
+        )}
       </Card>
 
       <ShareModal epigram={epigram} isOpen={isShareModalOpen} onOpenChange={setIsShareModalOpen} />

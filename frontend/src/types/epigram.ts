@@ -33,3 +33,38 @@ export interface TrendingTopicResponse {
   epigramCount: number;
   totalUpvotes: number;
 }
+
+// Comment types
+export interface Comment {
+  id: number;
+  epigramId: number;
+  content: string;
+  createdAt: string;
+}
+
+export interface CommentResponse {
+  epigramId: number;
+  comments: Comment[];
+}
+
+// Interaction types
+export enum InteractionType {
+  UPVOTE = 'UPVOTE',
+  DOWNVOTE = 'DOWNVOTE',
+  COMMENT = 'COMMENT',
+}
+
+export interface InteractionRequest {
+  epigramId: number;
+  interactionType: InteractionType;
+  commentContent?: string;
+  recaptchaToken: string;
+}
+
+export interface InteractionResponse {
+  success: boolean;
+  message: string;
+  commentId?: number;
+  upvotes: number;
+  downvotes: number;
+}
