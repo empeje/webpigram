@@ -136,11 +136,8 @@ public class EpigramRepository {
 
   // Get a random epigram
   public Feeds getRandomEpigram() {
-    var record = dsl.selectFrom(Tables.EPIGRAM).orderBy(rand()).limit(1).fetchOne();
-
-    if (record == null) {
-      throw new IllegalStateException("No epigrams found");
-    }
+    var record =
+        dsl.selectFrom(Tables.EPIGRAM).orderBy(rand()).limit(1).fetchOptional().orElseThrow();
 
     return new Feeds(
         record.getId(),
@@ -168,5 +165,9 @@ public class EpigramRepository {
         record.getDownVotes(),
         record.getCreatedAt().toLocalDateTime(),
         getTopicsForEpigram(record.getId()));
+  }
+
+  public boolean epigramExists(long id) {
+    return dsl.fetchExists(dsl.selectFrom(Tables.EPIGRAM).where(Tables.EPIGRAM.ID.eq(id)));
   }
 }
