@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Epigram } from "@/types/epigram";
-import { fetchPagedEpigrams } from "@/lib/api";
-import { epigrams as initialEpigrams } from "@/data/epigrams";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Epigram } from '@/types/epigram';
+import { fetchPagedEpigrams } from '@/lib/api';
+import { epigrams as initialEpigrams } from '@/data/epigrams';
 
 export function useEpigramData() {
   const [epigrams, setEpigrams] = useState<Epigram[]>([]);
@@ -23,8 +23,8 @@ export function useEpigramData() {
         setPage(0);
         setError(null);
       } catch (err) {
-        console.error("Failed to fetch epigrams:", err);
-        setError("Failed to load epigrams. Using fallback data.");
+        console.error('Failed to fetch epigrams:', err);
+        setError('Failed to load epigrams. Using fallback data.');
         setEpigrams(initialEpigrams); // Fallback to static data
         setHasMore(false);
       } finally {
@@ -39,18 +39,18 @@ export function useEpigramData() {
   // Function to load more epigrams
   const loadMoreEpigrams = useCallback(async () => {
     if (loadingRef.current || !hasMore) return;
-    
+
     loadingRef.current = true;
     try {
       const nextPage = page + 1;
       const result = await fetchPagedEpigrams(nextPage);
-      
+
       setEpigrams(prev => [...prev, ...result.epigrams]);
       setHasMore(result.hasMore);
       setPage(nextPage);
     } catch (err) {
-      console.error("Failed to fetch more epigrams:", err);
-      setError("Failed to load more epigrams.");
+      console.error('Failed to fetch more epigrams:', err);
+      setError('Failed to load more epigrams.');
     } finally {
       loadingRef.current = false;
     }
@@ -62,11 +62,11 @@ export function useEpigramData() {
 
     const handleScroll = () => {
       if (loadingRef.current || !hasMore) return;
-      
+
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
-      
+
       // Load more when user scrolls to 80% of the page
       if (scrollPosition + windowHeight > fullHeight * 0.8) {
         loadMoreEpigrams();
@@ -77,12 +77,12 @@ export function useEpigramData() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loadMoreEpigrams, hasMore, initialLoadComplete]);
 
-  return { 
-    epigrams, 
-    setEpigrams, 
-    loading, 
-    error, 
+  return {
+    epigrams,
+    setEpigrams,
+    loading,
+    error,
     hasMore,
-    loadMoreEpigrams 
+    loadMoreEpigrams,
   };
-} 
+}

@@ -73,6 +73,7 @@ Make sure to also update the backend configuration to use standard reCAPTCHA.
 #### Development/Testing
 
 For development/testing purposes with standard reCAPTCHA, you can use Google's test key:
+
 ```
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
 ```

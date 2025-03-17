@@ -151,4 +151,22 @@ public class EpigramRepository {
         record.getCreatedAt().toLocalDateTime(),
         getTopicsForEpigram(record.getId()));
   }
+
+  // Get an epigram by ID
+  public Feeds getEpigramById(long id) {
+    var record =
+        dsl.selectFrom(Tables.EPIGRAM)
+            .where(Tables.EPIGRAM.ID.eq(id))
+            .fetchOptional()
+            .orElseThrow();
+
+    return new Feeds(
+        record.getId(),
+        record.getContent(),
+        record.getAuthor(),
+        record.getUpVotes(),
+        record.getDownVotes(),
+        record.getCreatedAt().toLocalDateTime(),
+        getTopicsForEpigram(record.getId()));
+  }
 }

@@ -1,7 +1,12 @@
-import { Epigram } from "@/types/epigram";
+import { Epigram } from '@/types/epigram';
 
-export function useEpigramCreator(epigrams: Epigram[], setEpigrams: React.Dispatch<React.SetStateAction<Epigram[]>>) {
-  const handleAddEpigram = (newEpigram: Omit<Epigram, "id" | "upvotes" | "downvotes" | "createdAt">) => {
+export function useEpigramCreator(
+  epigrams: Epigram[],
+  setEpigrams: React.Dispatch<React.SetStateAction<Epigram[]>>
+) {
+  const handleAddEpigram = (
+    newEpigram: Omit<Epigram, 'id' | 'upvotes' | 'downvotes' | 'createdAt'>
+  ) => {
     const epigramToAdd: Epigram = {
       id: (epigrams.length + 1).toString(),
       content: newEpigram.content,
@@ -16,4 +21,4 @@ export function useEpigramCreator(epigrams: Epigram[], setEpigrams: React.Dispat
   };
 
   return { handleAddEpigram };
-} 
+}

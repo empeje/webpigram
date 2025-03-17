@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get('page') || '0';
     const pageSize = searchParams.get('pageSize') || '10';
-    
+
     const response = await fetch(`${API_URL}/feeds/paged?page=${page}&pageSize=${pageSize}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -25,9 +25,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Failed to fetch paged epigrams:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch paged epigrams' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch paged epigrams' }, { status: 500 });
   }
-} 
+}

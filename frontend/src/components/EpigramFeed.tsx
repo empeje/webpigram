@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Epigram } from "@/types/epigram";
-import { EpigramCard } from "@/components/EpigramCard";
-import { ImLuckyButton } from "@/components/ImLuckyButton";
+import { Epigram } from '@/types/epigram';
+import { EpigramCard } from '@/components/EpigramCard';
+import { ImLuckyButton } from '@/components/ImLuckyButton';
 
 interface EpigramFeedProps {
   epigrams: Epigram[];
@@ -30,7 +30,7 @@ export function EpigramFeed({ epigrams, loading, error, hasMore, setEpigrams }: 
         </div>
         <p className="text-muted-foreground">Wisdom from the world of programming</p>
       </header>
-      
+
       {loading && epigrams.length === 0 ? (
         <div className="text-center py-10">
           <p>Loading epigrams...</p>
@@ -41,16 +41,16 @@ export function EpigramFeed({ epigrams, loading, error, hasMore, setEpigrams }: 
         </div>
       ) : (
         <div className="space-y-6">
-          {epigrams.map((epigram) => (
+          {epigrams.map(epigram => (
             <EpigramCard key={epigram.id} epigram={epigram} />
           ))}
-          
+
           {loading && epigrams.length > 0 && (
             <div className="text-center py-4">
               <p>Loading more epigrams...</p>
             </div>
           )}
-          
+
           {!hasMore && epigrams.length > 0 && (
             <div className="text-center py-4 text-muted-foreground">
               <p>No more epigrams to load</p>
@@ -60,4 +60,4 @@ export function EpigramFeed({ epigrams, loading, error, hasMore, setEpigrams }: 
       )}
     </div>
   );
-} 
+}

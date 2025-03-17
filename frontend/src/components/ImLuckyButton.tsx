@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,14 +10,14 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
-import { fetchRandomEpigram } from "@/lib/api";
-import { Epigram } from "@/types/epigram";
-import dynamic from "next/dynamic";
-import { Sparkles } from "lucide-react";
+} from '@/components/ui/dialog';
+import { fetchRandomEpigram } from '@/lib/api';
+import { Epigram } from '@/types/epigram';
+import dynamic from 'next/dynamic';
+import { Sparkles } from 'lucide-react';
 
 // Dynamically import the confetti component to avoid SSR issues
-const ReactConfetti = dynamic(() => import("react-confetti"), {
+const ReactConfetti = dynamic(() => import('react-confetti'), {
   ssr: false,
 });
 
@@ -30,13 +30,13 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [randomEpigram, setRandomEpigram] = useState<Epigram | null>(null);
   const [windowSize, setWindowSize] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
   });
 
   // Update window size when component mounts
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -49,8 +49,8 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
         });
       };
 
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
@@ -60,13 +60,13 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
       const epigram = await fetchRandomEpigram();
       setRandomEpigram(epigram);
       setShowConfetti(true);
-      
+
       // Stop confetti after 5 seconds
       setTimeout(() => {
         setShowConfetti(false);
       }, 5000);
     } catch (error) {
-      console.error("Failed to fetch random epigram:", error);
+      console.error('Failed to fetch random epigram:', error);
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +89,7 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
           numberOfPieces={500}
         />
       )}
-      
+
       <div className="relative">
         <Button
           variant="secondary"
@@ -106,22 +106,20 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
         </Button>
       </div>
 
-      <Dialog open={!!randomEpigram} onOpenChange={(open) => !open && handleDialogClose()}>
+      <Dialog open={!!randomEpigram} onOpenChange={open => !open && handleDialogClose()}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Your Lucky Epigram</DialogTitle>
-            <DialogDescription>
-              Here&apos;s a random epigram just for you!
-            </DialogDescription>
+            <DialogDescription>Here&apos;s a random epigram just for you!</DialogDescription>
           </DialogHeader>
-          
+
           {randomEpigram && (
             <div className="p-4 border rounded-md bg-muted/50">
               <p className="whitespace-pre-wrap mb-2">{randomEpigram.content}</p>
               <div className="flex justify-between items-center mt-4 text-sm text-muted-foreground">
                 <span>— {randomEpigram.author}</span>
                 <div className="flex gap-2">
-                  {randomEpigram.topics.map((topic) => (
+                  {randomEpigram.topics.map(topic => (
                     <span key={topic} className="bg-primary/10 px-2 py-0.5 rounded-full text-xs">
                       {topic}
                     </span>
@@ -130,16 +128,14 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
               </div>
             </div>
           )}
-          
+
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button">
-                Add to Feed
-              </Button>
+              <Button type="button">Add to Feed</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   );
-} 
+}

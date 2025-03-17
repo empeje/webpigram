@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -10,12 +10,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Epigram } from "@/types/epigram";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Epigram } from '@/types/epigram';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 // Define the global grecaptcha type
 declare global {
@@ -30,27 +30,35 @@ declare global {
 }
 
 const formSchema = z.object({
-  content: z.string().min(1, "Content is required"),
-  author: z.string().min(1, "Author is required"),
+  content: z.string().min(1, 'Content is required'),
+  author: z.string().min(1, 'Author is required'),
   topics: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface EpigramFormProps {
-  onSubmit: (epigram: Omit<Epigram, "id" | "upvotes" | "downvotes" | "createdAt"> & { recaptchaToken: string }) => void;
+  onSubmit: (
+    epigram: Omit<Epigram, 'id' | 'upvotes' | 'downvotes' | 'createdAt'> & {
+      recaptchaToken: string;
+    }
+  ) => void;
 }
 
 export function EpigramForm({ onSubmit }: EpigramFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
-  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '';
 
   // Load reCAPTCHA script
   useEffect(() => {
     // Skip if already loaded or no site key
-    if (window.grecaptcha || !siteKey || document.querySelector('script[src*="recaptcha/enterprise.js"]')) {
+    if (
+      window.grecaptcha ||
+      !siteKey ||
+      document.querySelector('script[src*="recaptcha/enterprise.js"]')
+    ) {
       setRecaptchaLoaded(true);
       return;
     }
@@ -63,7 +71,7 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
       setRecaptchaLoaded(true);
     };
     script.onerror = () => {
-      setError("Failed to load reCAPTCHA");
+      setError('Failed to load reCAPTCHA');
     };
     document.head.appendChild(script);
 
@@ -76,15 +84,15 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      content: "",
-      author: "",
-      topics: "",
+      content: '',
+      author: '',
+      topics: '',
     },
   });
 
   const executeRecaptcha = async (): Promise<string | null> => {
     if (!recaptchaLoaded || !window.grecaptcha?.enterprise) {
-      setError("reCAPTCHA is not loaded yet. Please try again.");
+      setError('reCAPTCHA is not loaded yet. Please try again.');
       return null;
     }
 
@@ -93,7 +101,7 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
         window.grecaptcha.enterprise.ready(async () => {
           try {
             const token = await window.grecaptcha.enterprise.execute(siteKey, {
-              action: 'SUBMIT_EPIGRAM'
+              action: 'SUBMIT_EPIGRAM',
             });
             resolve(token);
           } catch (error) {
@@ -102,8 +110,8 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
         });
       });
     } catch (error) {
-      console.error("reCAPTCHA execution failed:", error);
-      setError("reCAPTCHA verification failed. Please try again.");
+      console.error('reCAPTCHA execution failed:', error);
+      setError('reCAPTCHA verification failed. Please try again.');
       return null;
     }
   };
@@ -111,7 +119,7 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
   const handleSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       // Execute reCAPTCHA and get token
       const token = await executeRecaptcha();
@@ -119,12 +127,15 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
         setIsSubmitting(false);
         return;
       }
-      
+
       // Process topics from comma-separated string to array
-      const topicsArray = values.topics 
-        ? values.topics.split(',').map(topic => topic.trim()).filter(Boolean)
+      const topicsArray = values.topics
+        ? values.topics
+            .split(',')
+            .map(topic => topic.trim())
+            .filter(Boolean)
         : [];
-      
+
       // Create a new epigram object
       const newEpigram = {
         content: values.content,
@@ -132,14 +143,14 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
         topics: topicsArray,
         recaptchaToken: token,
       };
-      
+
       // Call the onSubmit callback
       await onSubmit(newEpigram);
-      
+
       // Reset the form
       form.reset();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit epigram");
+      setError(err instanceof Error ? err.message : 'Failed to submit epigram');
     } finally {
       setIsSubmitting(false);
     }
@@ -154,7 +165,7 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        
+
         <FormField
           control={form.control}
           name="content"
@@ -162,17 +173,13 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
             <FormItem>
               <FormLabel>Epigram</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Enter your epigram..."
-                  className="resize-none"
-                  {...field}
-                />
+                <Textarea placeholder="Enter your epigram..." className="resize-none" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="author"
@@ -186,7 +193,7 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="topics"
@@ -200,11 +207,11 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
             </FormItem>
           )}
         />
-        
+
         <Button type="submit" disabled={isSubmitting || !recaptchaLoaded}>
-          {isSubmitting ? "Submitting..." : "Submit Epigram"}
+          {isSubmitting ? 'Submitting...' : 'Submit Epigram'}
         </Button>
       </form>
     </Form>
   );
-} 
+}

@@ -1,10 +1,10 @@
 // jest.config.ts
-import type { Config } from 'jest'
-import nextJest from 'next/jest'
+import type { Config } from 'jest';
+import nextJest from 'next/jest';
 
 const createJestConfig = nextJest({
   dir: './',
-})
+});
 
 const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
@@ -13,6 +13,6 @@ const config: Config = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
-}
+};
 
-export default createJestConfig(config)
+export default createJestConfig(config);

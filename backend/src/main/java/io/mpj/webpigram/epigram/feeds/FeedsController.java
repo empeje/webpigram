@@ -1,7 +1,9 @@
 package io.mpj.webpigram.epigram.feeds;
 
 import com.google.common.collect.ImmutableList;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,5 +36,14 @@ public class FeedsController {
   @GetMapping("/im-in-lucky")
   public Feeds getRandomEpigram() {
     return feedsService.getRandomEpigram();
+  }
+
+  @GetMapping("/epigram/{id}")
+  public ResponseEntity<Feeds> getEpigramById(@PathVariable("id") long id) {
+    Feeds epigram = feedsService.getEpigramById(id);
+    if (epigram == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(epigram);
   }
 }

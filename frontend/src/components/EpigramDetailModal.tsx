@@ -1,31 +1,31 @@
-import { Epigram } from '@/types/epigram';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+'use client';
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from 'lucide-react';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Epigram } from '@/types/epigram';
 import { useState } from 'react';
-import { ShareModal } from './ShareModal';
+import { useRouter } from 'next/navigation';
 
-interface EpigramCardProps {
+interface EpigramDetailModalProps {
   epigram: Epigram;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-// Helper function to format date
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
-};
-
-export function EpigramCard({ epigram }: EpigramCardProps) {
+export function EpigramDetailModal({ epigram, isOpen, onOpenChange }: EpigramDetailModalProps) {
   const [upvotes, setUpvotes] = useState(epigram.upvotes);
   const [downvotes, setDownvotes] = useState(epigram.downvotes);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const router = useRouter();
 
   const handleUpvote = () => {
     if (hasUpvoted) {
@@ -57,14 +57,29 @@ export function EpigramCard({ epigram }: EpigramCardProps) {
     }
   };
 
-  const handleShare = () => {
-    setIsShareModalOpen(true);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
+  };
+
+  const handleClose = () => {
+    onOpenChange(false);
+    // Remove the epigram ID from the URL without refreshing the page
+    router.push('/', { scroll: false });
   };
 
   return (
-    <>
-      <Card className="w-full overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
-        <CardContent className="p-6">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Epigram</DialogTitle>
+        </DialogHeader>
+
+        <div className="mt-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
@@ -90,10 +105,8 @@ export function EpigramCard({ epigram }: EpigramCardProps) {
               ))}
             </div>
           )}
-        </CardContent>
 
-        <CardFooter className="px-6 py-4 bg-muted/20 border-t flex justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 mt-6 border-t pt-4">
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
@@ -117,24 +130,12 @@ export function EpigramCard({ epigram }: EpigramCardProps) {
               <span className="text-sm">{downvotes}</span>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
-              <MessageSquare className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 rounded-full"
-              onClick={handleShare}
-            >
-              <Share2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-
-      <ShareModal epigram={epigram} isOpen={isShareModalOpen} onOpenChange={setIsShareModalOpen} />
-    </>
+        <DialogFooter className="mt-4">
+          <Button onClick={handleClose}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { Home, PlusCircle, User, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Link from 'next/link';
+import { Home, PlusCircle, User, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
 export function LeftSidebar() {
   return (
@@ -32,7 +32,7 @@ export function LeftSidebar() {
             </Button>
           </nav>
         </div>
-        
+
         <div className="space-y-2">
           <h3 className="text-sm font-medium text-muted-foreground">Account</h3>
           <nav className="flex flex-col space-y-1">
@@ -50,16 +50,20 @@ export function LeftSidebar() {
                     Coming Soon!
                   </DialogTitle>
                   <DialogDescription className="pt-4 text-base">
-                    We know you&apos;re excited to create your own account here, but for now everyone is anonymous. 
-                    <span className="block mt-2">✨ The beauty of anonymity is that ideas stand on their own merit! ✨</span>
-                    <span className="block mt-2">We&apos;ll notify you when personal profiles become available. Until then, enjoy sharing your wisdom incognito!</span>
+                    We know you&apos;re excited to create your own account here, but for now
+                    everyone is anonymous.
+                    <span className="block mt-2">
+                      ✨ The beauty of anonymity is that ideas stand on their own merit! ✨
+                    </span>
+                    <span className="block mt-2">
+                      We&apos;ll notify you when personal profiles become available. Until then,
+                      enjoy sharing your wisdom incognito!
+                    </span>
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex justify-end mt-4">
                   <DialogClose asChild>
-                    <Button variant="default">
-                      Got it!
-                    </Button>
+                    <Button variant="default">Got it!</Button>
                   </DialogClose>
                 </div>
               </DialogContent>
@@ -69,4 +73,4 @@ export function LeftSidebar() {
       </div>
     </div>
   );
-} 
+}

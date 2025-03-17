@@ -32,4 +32,4 @@ export interface TrendingTopicResponse {
   topic: string;
   epigramCount: number;
   totalUpvotes: number;
-} 
+}

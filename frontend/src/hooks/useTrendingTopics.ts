@@ -11,11 +11,11 @@ export function useTrendingTopics() {
       try {
         setLoading(true);
         const response = await fetch('/api/trending');
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch trending topics');
         }
-        
+
         const data = await response.json();
         setTrendingTopics(data);
         setError(null);
@@ -31,4 +31,4 @@ export function useTrendingTopics() {
   }, []);
 
   return { trendingTopics, loading, error };
-} 
+}

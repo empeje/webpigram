@@ -26,4 +26,8 @@ public class FeedsService {
   public Feeds getRandomEpigram() {
     return epigramRepository.getRandomEpigram();
   }
+
+  public Feeds getEpigramById(long id) {
+    return epigramRepository.getEpigramById(id);
+  }
 }
