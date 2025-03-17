@@ -1,6 +1,5 @@
 import { TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingTopicResponse } from "@/types/epigram";
 import { useTrendingTopics } from "@/hooks/useTrendingTopics";
 import { Skeleton } from "@/components/ui/skeleton";
 

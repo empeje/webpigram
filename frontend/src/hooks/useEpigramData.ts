@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Epigram } from "@/types/epigram";
-import { fetchEpigrams, fetchPagedEpigrams } from "@/lib/api";
+import { fetchPagedEpigrams } from "@/lib/api";
 import { epigrams as initialEpigrams } from "@/data/epigrams";
 
 export function useEpigramData() {

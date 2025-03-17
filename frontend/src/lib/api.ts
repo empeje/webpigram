@@ -1,8 +1,5 @@
 import { Epigram, EpigramResponse, PagedEpigramResponse } from "@/types/epigram";
 
-// Get API URL from environment variable or use default for testing
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
 export async function fetchEpigrams(): Promise<Epigram[]> {
   try {
     // Use the Next.js API route instead of directly calling the backend

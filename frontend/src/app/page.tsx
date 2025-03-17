@@ -4,14 +4,12 @@ import { Layout } from "@/components/Layout";
 import { LeftSidebar } from "@/components/LeftSidebar";
 import { RightSidebar } from "@/components/RightSidebar";
 import { EpigramFeed } from "@/components/EpigramFeed";
-import { useEpigramCreator } from "@/components/EpigramCreator";
 import { useEpigramData } from "@/hooks/useEpigramData";
 import { useEpigramContext } from "@/contexts/EpigramContext";
 import { useEffect } from "react";
 
 export default function HomePage() {
   const { epigrams, setEpigrams, loading, error, hasMore } = useEpigramData();
-  const { handleAddEpigram } = useEpigramCreator(epigrams, setEpigrams);
   const { newlySubmittedEpigram, setNewlySubmittedEpigram } = useEpigramContext();
   
   // Check for newly submitted epigram and add it to the feed

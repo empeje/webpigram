@@ -99,7 +99,7 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
           disabled={isLoading}
         >
           <Sparkles className="h-3.5 w-3.5" />
-          <span>I'm Lucky</span>
+          <span>I&apos;m Lucky</span>
           <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max opacity-0 transition-opacity group-hover:opacity-100 text-xs bg-background text-foreground px-2 py-1 rounded shadow-sm border z-50">
             Click here to generate a new epigram
           </span>
@@ -111,7 +111,7 @@ export function ImLuckyButton({ onEpigramAdded }: ImLuckyButtonProps) {
           <DialogHeader>
             <DialogTitle>Your Lucky Epigram</DialogTitle>
             <DialogDescription>
-              Here's a random epigram just for you!
+              Here&apos;s a random epigram just for you!
             </DialogDescription>
           </DialogHeader>
           

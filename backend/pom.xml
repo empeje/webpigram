@@ -41,6 +41,7 @@
         <nullaway.version>0.12.4</nullaway.version>
         <postgresql.version>42.7.5</postgresql.version>
         <sortpom-maven-plugin.version>3.4.0</sortpom-maven-plugin.version>
+        <spotless-maven-plugin.version>2.44.3</spotless-maven-plugin.version>
         <spring-boot.version>3.4.3</spring-boot.version>
         <spring-session.version>3.4.2</spring-session.version>
     </properties>
@@ -90,12 +91,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-validation</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
@@ -303,6 +304,16 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>io.mpj.webpigram.WebpigramApplication</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless-maven-plugin.version}</version>
+                <configuration>
+                    <java>
+                        <googleJavaFormat/>
+                    </java>
                 </configuration>
             </plugin>
         </plugins>

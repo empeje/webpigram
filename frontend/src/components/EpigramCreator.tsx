@@ -1,10 +1,5 @@
 import { Epigram } from "@/types/epigram";
 
-interface EpigramCreatorProps {
-  epigrams: Epigram[];
-  setEpigrams: React.Dispatch<React.SetStateAction<Epigram[]>>;
-}
-
 export function useEpigramCreator(epigrams: Epigram[], setEpigrams: React.Dispatch<React.SetStateAction<Epigram[]>>) {
   const handleAddEpigram = (newEpigram: Omit<Epigram, "id" | "upvotes" | "downvotes" | "createdAt">) => {
     const epigramToAdd: Epigram = {

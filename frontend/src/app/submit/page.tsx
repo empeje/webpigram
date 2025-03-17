@@ -22,7 +22,6 @@ const ReactConfetti = dynamic(() => import("react-confetti"), {
 export default function SubmitPage() {
   const router = useRouter();
   const { setNewlySubmittedEpigram } = useEpigramContext();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
@@ -50,8 +49,6 @@ export default function SubmitPage() {
   }, []);
 
   const handleSubmit = async (epigram: SubmitEpigramRequest) => {
-    setIsSubmitting(true);
-    
     try {
       // Submit the epigram to the API
       const response = await submitEpigram(epigram);
@@ -88,9 +85,8 @@ export default function SubmitPage() {
       setTimeout(() => {
         router.push("/");
       }, 1500);
-    } catch (error) {
+    } catch {
       // Error is handled in the form component
-      setIsSubmitting(false);
     }
   };
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,7 +45,6 @@ export function EpigramForm({ onSubmit }: EpigramFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
 
   // Load reCAPTCHA script

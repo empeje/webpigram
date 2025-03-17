@@ -50,9 +50,9 @@ export function LeftSidebar() {
                     Coming Soon!
                   </DialogTitle>
                   <DialogDescription className="pt-4 text-base">
-                    We know you're excited to create your own account here, but for now everyone is anonymous. 
+                    We know you&apos;re excited to create your own account here, but for now everyone is anonymous. 
                     <span className="block mt-2">✨ The beauty of anonymity is that ideas stand on their own merit! ✨</span>
-                    <span className="block mt-2">We'll notify you when personal profiles become available. Until then, enjoy sharing your wisdom incognito!</span>
+                    <span className="block mt-2">We&apos;ll notify you when personal profiles become available. Until then, enjoy sharing your wisdom incognito!</span>
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex justify-end mt-4">
