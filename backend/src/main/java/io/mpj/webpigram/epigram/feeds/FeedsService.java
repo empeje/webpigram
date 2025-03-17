@@ -18,4 +18,8 @@ public class FeedsService {
   public PagedFeeds getPagedFeeds(int page, int pageSize) {
     return epigramRepository.getPagedFeeds(page, pageSize);
   }
+
+  public ImmutableList<TrendingTopic> getTrendingTopics() {
+    return epigramRepository.getTrendingTopics();
+  }
 }

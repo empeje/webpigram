@@ -25,4 +25,11 @@ export interface PagedEpigramResponse {
   page: number;
   pageSize: number;
   hasMore: boolean;
+}
+
+// Trending topic response from backend
+export interface TrendingTopicResponse {
+  topic: string;
+  epigramCount: number;
+  totalUpvotes: number;
 } 

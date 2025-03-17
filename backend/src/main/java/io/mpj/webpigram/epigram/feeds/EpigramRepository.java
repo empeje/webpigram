@@ -1,5 +1,9 @@
 package io.mpj.webpigram.epigram.feeds;
 
+import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.sum;
+
 import com.google.common.collect.ImmutableList;
 import io.mpj.webpigram.db.postgres.Tables;
 import io.mpj.webpigram.db.postgres.tables.records.EpigramTopicRecord;
@@ -66,6 +70,34 @@ public class EpigramRepository {
     var resultFeeds = hasMore ? feeds.subList(0, pageSize) : feeds;
 
     return new PagedFeeds(ImmutableList.copyOf(resultFeeds), page, pageSize, hasMore);
+  }
+
+  // Get the top 5 trending topics based on epigram count and upvotes
+  public ImmutableList<TrendingTopic> getTrendingTopics() {
+    var epigramTopic = Tables.EPIGRAM_TOPIC;
+    var epigram = Tables.EPIGRAM;
+
+    return dsl
+        .select(
+            epigramTopic.TOPIC,
+            count().as("epigram_count"),
+            sum(epigram.UP_VOTES).as("total_upvotes"))
+        .from(epigramTopic)
+        .join(epigram)
+        .on(epigramTopic.EPIGRAM_ID.eq(epigram.ID))
+        .groupBy(epigramTopic.TOPIC)
+        .orderBy(
+            field("total_upvotes", Long.class).desc(), field("epigram_count", Long.class).desc())
+        .limit(5)
+        .fetch()
+        .map(
+            record ->
+                new TrendingTopic(
+                    record.get(epigramTopic.TOPIC),
+                    record.get("epigram_count", Long.class),
+                    record.get("total_upvotes", Long.class)))
+        .stream()
+        .collect(ImmutableList.toImmutableList());
   }
 
   // Helper method to get topics for an epigram

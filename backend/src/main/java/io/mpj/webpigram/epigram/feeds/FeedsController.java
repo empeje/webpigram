@@ -25,4 +25,9 @@ public class FeedsController {
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
     return feedsService.getPagedFeeds(page, pageSize > 0 ? pageSize : DEFAULT_PAGE_SIZE);
   }
+
+  @GetMapping("/trending")
+  public ImmutableList<TrendingTopic> getTrendingTopics() {
+    return feedsService.getTrendingTopics();
+  }
 }

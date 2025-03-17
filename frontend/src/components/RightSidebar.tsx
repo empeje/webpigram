@@ -1,12 +1,12 @@
 import { TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { TrendingTopicResponse } from "@/types/epigram";
+import { useTrendingTopics } from "@/hooks/useTrendingTopics";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface RightSidebarProps {
-  trendingTopics: string[];
-  topicFrequency: Record<string, number>;
-}
+export function RightSidebar() {
+  const { trendingTopics, loading, error } = useTrendingTopics();
 
-export function RightSidebar({ trendingTopics, topicFrequency }: RightSidebarProps) {
   return (
     <div className="w-72 border-l pl-6 py-6 hidden lg:block">
       <div className="space-y-6">
@@ -16,16 +16,32 @@ export function RightSidebar({ trendingTopics, topicFrequency }: RightSidebarPro
             Trending Topics
           </h3>
           <div className="space-y-3">
-            {trendingTopics.map((topic) => (
-              <Card key={topic} className="overflow-hidden">
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{topic}</span>
-                    <span className="text-xs text-muted-foreground">{topicFrequency[topic]} posts</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {loading ? (
+              // Show skeletons while loading
+              Array(5).fill(0).map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-12" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : error ? (
+              <p className="text-sm text-red-500">Failed to load trending topics</p>
+            ) : (
+              trendingTopics.map((topic) => (
+                <Card key={topic.topic} className="overflow-hidden">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{topic.topic}</span>
+                      <span className="text-xs text-muted-foreground">{topic.epigramCount} posts</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </div>
