@@ -6,7 +6,7 @@ import { fetchEpigramById } from '@/lib/api';
 import { useEpigramContext } from '@/contexts/EpigramContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
-export default function EpigramPage({ params }: { params: { id: string } }) {
+export default function EpigramPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { setSharedEpigram, setIsShareModalOpen } = useEpigramContext();
   const { id: epigramId } = use(params);
