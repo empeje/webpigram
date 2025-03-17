@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -36,8 +37,11 @@ public class FortuneLoader {
   }
 
   @Bean
+  @ConditionalOnProperty(name = "app.fortune-loader.enabled", havingValue = "true")
   public CommandLineRunner loadData(EpigramRepository epigramRepository, DSLContext dsl) {
     return args -> {
+      logger.info("Fortune loader is enabled, starting to load fortunes...");
+
       // Ensure resources directory exists
       Path resourcesPath = Paths.get(RESOURCES_DIR);
       if (!Files.exists(resourcesPath)) {

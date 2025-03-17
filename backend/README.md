@@ -35,7 +35,7 @@ Webpigram is a web application that allows users to
   - Implement and manage CAPTCHA (or bypass it in development).
 
 - `epigram-feeds`
-  - `/feeds` endpoint for combined most popular and recently added epigrams.
+  - `/feeds` endpoint for combined most popular and recently added epigrams. ✅
 
 ---
 
