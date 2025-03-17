@@ -1,8 +1,17 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface LayoutProps {
   children: ReactNode;
@@ -28,9 +37,33 @@ export function Layout({ children }: LayoutProps) {
             <Link href="/submit" className="text-sm font-medium hover:text-primary transition-colors">
               Submit
             </Link>
-            <Button size="sm" className="rounded-full">
-              Sign In
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="sm" className="rounded-full">
+                  Sign In
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center">
+                    <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
+                    Coming Soon!
+                  </DialogTitle>
+                  <DialogDescription className="pt-4 text-base">
+                    We know you're excited to create your own account here, but for now everyone is anonymous. 
+                    <span className="block mt-2">✨ The beauty of anonymity is that ideas stand on their own merit! ✨</span>
+                    <span className="block mt-2">We'll notify you when personal profiles become available. Until then, enjoy sharing your wisdom incognito!</span>
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex justify-end mt-4">
+                  <DialogClose asChild>
+                    <Button variant="default">
+                      Got it!
+                    </Button>
+                  </DialogClose>
+                </div>
+              </DialogContent>
+            </Dialog>
           </nav>
           
           {/* Mobile Menu Button */}
@@ -62,9 +95,33 @@ export function Layout({ children }: LayoutProps) {
               >
                 Submit
               </Link>
-              <Button size="sm" className="rounded-full w-full">
-                Sign In
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="rounded-full w-full">
+                    Sign In
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center">
+                      <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
+                      Coming Soon!
+                    </DialogTitle>
+                    <DialogDescription className="pt-4 text-base">
+                      We know you're excited to create your own account here, but for now everyone is anonymous. 
+                      <span className="block mt-2">✨ The beauty of anonymity is that ideas stand on their own merit! ✨</span>
+                      <span className="block mt-2">We'll notify you when personal profiles become available. Until then, enjoy sharing your wisdom incognito!</span>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-end mt-4">
+                    <DialogClose asChild>
+                      <Button variant="default" onClick={() => setMobileMenuOpen(false)}>
+                        Got it!
+                      </Button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         )}
