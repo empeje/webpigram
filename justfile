@@ -1,3 +1,6 @@
+package-backend:
+    cd backend && mvn clean package && cd -
+
 build:
     cd backend && mvn clean install && cd -
     cd frontend && pnpm run build && cd -
