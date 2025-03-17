@@ -40,6 +40,34 @@ public class EpigramRepository {
         .collect(ImmutableList.toImmutableList());
   }
 
+  // Get paginated epigrams sorted by popularity (upVotes - downVotes)
+  public PagedFeeds getPagedFeeds(int page, int pageSize) {
+    var feeds =
+        dsl
+            .selectFrom(Tables.EPIGRAM)
+            .orderBy(Tables.EPIGRAM.UP_VOTES.minus(Tables.EPIGRAM.DOWN_VOTES).desc())
+            .limit(pageSize + 1) // Fetch one extra to determine if there are more pages
+            .offset(page * pageSize)
+            .fetch()
+            .map(
+                record ->
+                    new Feeds(
+                        record.getId(),
+                        record.getContent(),
+                        record.getAuthor(),
+                        record.getUpVotes(),
+                        record.getDownVotes(),
+                        record.getCreatedAt().toLocalDateTime(),
+                        getTopicsForEpigram(record.getId())))
+            .stream()
+            .collect(ImmutableList.toImmutableList());
+
+    boolean hasMore = feeds.size() > pageSize;
+    var resultFeeds = hasMore ? feeds.subList(0, pageSize) : feeds;
+
+    return new PagedFeeds(ImmutableList.copyOf(resultFeeds), page, pageSize, hasMore);
+  }
+
   // Helper method to get topics for an epigram
   private ImmutableList<String> getTopicsForEpigram(long epigramId) {
     return dsl

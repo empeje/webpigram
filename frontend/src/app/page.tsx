@@ -9,7 +9,7 @@ import { useEpigramCreator } from "@/components/EpigramCreator";
 import { useEpigramData } from "@/hooks/useEpigramData";
 
 export default function HomePage() {
-  const { epigrams, setEpigrams, loading, error } = useEpigramData();
+  const { epigrams, setEpigrams, loading, error, hasMore } = useEpigramData();
   const { handleAddEpigram } = useEpigramCreator(epigrams, setEpigrams);
   const { trendingTopics, topicFrequency } = calculateTopicStats(epigrams);
 
@@ -17,7 +17,7 @@ export default function HomePage() {
     <Layout>
       <div className="flex min-h-[calc(100vh-140px)]">
         <LeftSidebar />
-        <EpigramFeed epigrams={epigrams} loading={loading} error={error} />
+        <EpigramFeed epigrams={epigrams} loading={loading} error={error} hasMore={hasMore} />
         <RightSidebar trendingTopics={trendingTopics} topicFrequency={topicFrequency} />
       </div>
     </Layout>

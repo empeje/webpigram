@@ -17,4 +17,12 @@ export interface EpigramResponse {
   downVotes: number;
   createdAt: string;
   topics: string[];
+}
+
+// Paged response from backend
+export interface PagedEpigramResponse {
+  feeds: EpigramResponse[];
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
 } 

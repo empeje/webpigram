@@ -14,4 +14,8 @@ public class FeedsService {
   public ImmutableList<Feeds> getFeeds() {
     return epigramRepository.getFeeds();
   }
+
+  public PagedFeeds getPagedFeeds(int page, int pageSize) {
+    return epigramRepository.getPagedFeeds(page, pageSize);
+  }
 }
