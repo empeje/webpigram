@@ -1,45 +1,79 @@
 'use client';
 
-import { useEffect, use } from 'react';
+import { useEffect, use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchEpigramById } from '@/lib/api';
-import { useEpigramContext } from '@/contexts/EpigramContext';
+import { Layout } from '@/components/Layout';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { Epigram } from '@/types/epigram';
+import { EpigramCard } from '@/components/EpigramCard';
 
 export default function EpigramPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const { setSharedEpigram, setIsShareModalOpen } = useEpigramContext();
   const { id: epigramId } = use(params);
+  const [epigram, setEpigram] = useState<Epigram | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadEpigram() {
+      setLoading(true);
       try {
-        const epigram = await fetchEpigramById(epigramId);
+        const fetchedEpigram = await fetchEpigramById(epigramId);
 
-        if (epigram) {
-          // Set the shared epigram in context
-          setSharedEpigram(epigram);
-          // Open the modal
-          setIsShareModalOpen(true);
-          // Redirect to home page
-          router.push('/');
+        if (fetchedEpigram) {
+          setEpigram(fetchedEpigram);
         } else {
-          // Epigram not found, redirect to home
-          router.push('/');
+          setError('Epigram not found');
+          // Wait a moment before redirecting
+          setTimeout(() => {
+            router.push('/');
+          }, 3000);
         }
-      } catch (error) {
-        console.error('Error loading epigram:', error);
-        // On error, redirect to home
-        router.push('/');
+      } catch (err) {
+        console.error('Error loading epigram:', err);
+        setError('Failed to load epigram');
+        // Wait a moment before redirecting
+        setTimeout(() => {
+          router.push('/');
+        }, 3000);
+      } finally {
+        setLoading(false);
       }
     }
 
     loadEpigram();
-  }, [epigramId, router, setSharedEpigram, setIsShareModalOpen]);
+  }, [epigramId, router]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <LoadingSpinner />
-    </div>
+    <Layout>
+      <div className="max-w-3xl mx-auto py-12 px-4">
+        <Button variant="ghost" size="sm" className="mb-6" asChild>
+          <Link href="/">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Link>
+        </Button>
+
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <LoadingSpinner />
+          </div>
+        ) : error ? (
+          <div className="text-center py-10">
+            <p className="text-red-500">{error}</p>
+            <p className="mt-2 text-muted-foreground">Redirecting to home page...</p>
+          </div>
+        ) : epigram ? (
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold tracking-tight mb-6">Epigram</h1>
+            <EpigramCard epigram={epigram} showComments={true} />
+          </div>
+        ) : null}
+      </div>
+    </Layout>
   );
 }

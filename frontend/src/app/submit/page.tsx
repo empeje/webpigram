@@ -76,14 +76,10 @@ export default function SubmitPage() {
       // Show confetti
       setShowConfetti(true);
 
-      // Stop confetti after 5 seconds
+      // Redirect to epigram detail page after a short delay
       setTimeout(() => {
         setShowConfetti(false);
-      }, 5000);
-
-      // Redirect to home page after a short delay
-      setTimeout(() => {
-        router.push('/');
+        router.push(`/epigram/${response.id}`);
       }, 1500);
     } catch {
       // Error is handled in the form component
