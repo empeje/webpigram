@@ -38,7 +38,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface EpigramFormProps {
-  onSubmit: (epigram: Omit<Epigram, "id" | "upvotes" | "downvotes" | "createdAt">) => void;
+  onSubmit: (epigram: Omit<Epigram, "id" | "upvotes" | "downvotes" | "createdAt"> & { recaptchaToken: string }) => void;
 }
 
 export function EpigramForm({ onSubmit }: EpigramFormProps) {
