@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: { epigramId: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ epigramId: string }> }
+) {
   try {
-    const epigramId = params.epigramId;
+    const epigramId = (await params).epigramId;
 
     const backendUrl = process.env.API_URL || 'http://localhost:8080';
     const response = await fetch(`${backendUrl}/api/epigram/interaction/comments/${epigramId}`, {
