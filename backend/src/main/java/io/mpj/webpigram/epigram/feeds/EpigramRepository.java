@@ -2,6 +2,7 @@ package io.mpj.webpigram.epigram.feeds;
 
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.rand;
 import static org.jooq.impl.DSL.sum;
 
 import com.google.common.collect.ImmutableList;
@@ -131,5 +132,23 @@ public class EpigramRepository {
     }
 
     return epigramRecord.getId();
+  }
+
+  // Get a random epigram
+  public Feeds getRandomEpigram() {
+    var record = dsl.selectFrom(Tables.EPIGRAM).orderBy(rand()).limit(1).fetchOne();
+
+    if (record == null) {
+      throw new IllegalStateException("No epigrams found");
+    }
+
+    return new Feeds(
+        record.getId(),
+        record.getContent(),
+        record.getAuthor(),
+        record.getUpVotes(),
+        record.getDownVotes(),
+        record.getCreatedAt().toLocalDateTime(),
+        getTopicsForEpigram(record.getId()));
   }
 }

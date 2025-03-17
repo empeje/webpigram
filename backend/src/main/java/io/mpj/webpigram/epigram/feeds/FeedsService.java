@@ -22,4 +22,8 @@ public class FeedsService {
   public ImmutableList<TrendingTopic> getTrendingTopics() {
     return epigramRepository.getTrendingTopics();
   }
+
+  public Feeds getRandomEpigram() {
+    return epigramRepository.getRandomEpigram();
+  }
 }

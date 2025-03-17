@@ -30,4 +30,9 @@ public class FeedsController {
   public ImmutableList<TrendingTopic> getTrendingTopics() {
     return feedsService.getTrendingTopics();
   }
+
+  @GetMapping("/im-in-lucky")
+  public Feeds getRandomEpigram() {
+    return feedsService.getRandomEpigram();
+  }
 }

@@ -62,4 +62,29 @@ export async function fetchPagedEpigrams(page: number, pageSize: number = 10): P
     console.error("Failed to fetch paged epigrams:", error);
     throw error;
   }
+}
+
+export async function fetchRandomEpigram(): Promise<Epigram> {
+  try {
+    // Use the Next.js API route instead of directly calling the backend
+    const response = await fetch('/api/im-in-lucky');
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching random epigram: ${response.status}`);
+    }
+    
+    const item: EpigramResponse = await response.json();
+    return {
+      id: item.id.toString(),
+      content: item.content,
+      author: item.author,
+      upvotes: item.upVotes || 0,
+      downvotes: item.downVotes || 0,
+      createdAt: item.createdAt,
+      topics: item.topics || [],
+    };
+  } catch (error) {
+    console.error("Failed to fetch random epigram:", error);
+    throw error;
+  }
 } 

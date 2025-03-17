@@ -15,7 +15,13 @@ export default function HomePage() {
     <Layout>
       <div className="flex min-h-[calc(100vh-140px)]">
         <LeftSidebar />
-        <EpigramFeed epigrams={epigrams} loading={loading} error={error} hasMore={hasMore} />
+        <EpigramFeed 
+          epigrams={epigrams} 
+          loading={loading} 
+          error={error} 
+          hasMore={hasMore} 
+          setEpigrams={setEpigrams}
+        />
         <RightSidebar />
       </div>
     </Layout>
