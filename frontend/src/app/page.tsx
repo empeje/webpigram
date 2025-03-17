@@ -1,184 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { epigrams as initialEpigrams } from "@/data/epigrams";
-import { EpigramCard } from "@/components/EpigramCard";
 import { Layout } from "@/components/Layout";
-import { Epigram } from "@/types/epigram";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Home, PlusCircle, TrendingUp, User, Sparkles } from "lucide-react";
-import Link from "next/link";
-import { fetchEpigrams } from "@/lib/api";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { LeftSidebar } from "@/components/LeftSidebar";
+import { RightSidebar } from "@/components/RightSidebar";
+import { EpigramFeed } from "@/components/EpigramFeed";
+import { calculateTopicStats } from "@/utils/topicUtils";
+import { useEpigramCreator } from "@/components/EpigramCreator";
+import { useEpigramData } from "@/hooks/useEpigramData";
 
 export default function HomePage() {
-  const [epigrams, setEpigrams] = useState<Epigram[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getEpigrams = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchEpigrams();
-        setEpigrams(data);
-        setError(null);
-      } catch (err) {
-        console.error("Failed to fetch epigrams:", err);
-        setError("Failed to load epigrams. Using fallback data.");
-        setEpigrams(initialEpigrams); // Fallback to static data
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getEpigrams();
-  }, []);
-
-  const handleAddEpigram = (newEpigram: Omit<Epigram, "id" | "upvotes" | "downvotes" | "createdAt">) => {
-    const epigramToAdd: Epigram = {
-      id: (epigrams.length + 1).toString(),
-      content: newEpigram.content,
-      author: newEpigram.author,
-      upvotes: 0,
-      downvotes: 0,
-      createdAt: new Date().toISOString(),
-      topics: newEpigram.topics || [],
-    };
-
-    setEpigrams([epigramToAdd, ...epigrams]);
-  };
-
-  // Get all unique topics from epigrams
-  const allTopics = epigrams.flatMap(epigram => epigram.topics);
-  const uniqueTopics = Array.from(new Set(allTopics));
-  
-  // Sort topics by frequency
-  const topicFrequency = allTopics.reduce((acc, topic) => {
-    acc[topic] = (acc[topic] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  
-  const trendingTopics = uniqueTopics
-    .sort((a, b) => topicFrequency[b] - topicFrequency[a])
-    .slice(0, 5);
+  const { epigrams, setEpigrams, loading, error } = useEpigramData();
+  const { handleAddEpigram } = useEpigramCreator(epigrams, setEpigrams);
+  const { trendingTopics, topicFrequency } = calculateTopicStats(epigrams);
 
   return (
     <Layout>
       <div className="flex min-h-[calc(100vh-140px)]">
-        {/* Left Sidebar - Navigation */}
-        <div className="w-64 border-r pr-6 py-6 hidden md:block">
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Main</h3>
-              <nav className="flex flex-col space-y-1">
-                <Button variant="ghost" className="justify-start" asChild>
-                  <Link href="/">
-                    <Home className="mr-2 h-4 w-4" />
-                    Home
-                  </Link>
-                </Button>
-                <Button variant="ghost" className="justify-start" asChild>
-                  <Link href="/submit">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Submit Epigram
-                  </Link>
-                </Button>
-              </nav>
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Account</h3>
-              <nav className="flex flex-col space-y-1">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" className="justify-start w-full">
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center">
-                        <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
-                        Coming Soon!
-                      </DialogTitle>
-                      <DialogDescription className="pt-4 text-base">
-                        We know you're excited to create your own account here, but for now everyone is anonymous. 
-                        <span className="block mt-2">✨ The beauty of anonymity is that ideas stand on their own merit! ✨</span>
-                        <span className="block mt-2">We'll notify you when personal profiles become available. Until then, enjoy sharing your wisdom incognito!</span>
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex justify-end mt-4">
-                      <DialogClose asChild>
-                        <Button variant="default">
-                          Got it!
-                        </Button>
-                      </DialogClose>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </nav>
-            </div>
-          </div>
-        </div>
-        
-        {/* Main Content - Epigram Feed */}
-        <div className="flex-1 px-4 py-6 md:px-6 max-w-3xl mx-auto">
-          <header className="mb-8">
-            <h2 className="text-3xl font-bold tracking-tight mb-2">Latest Epigrams</h2>
-            <p className="text-muted-foreground">Wisdom from the world of programming</p>
-          </header>
-          
-          {loading ? (
-            <div className="text-center py-10">
-              <p>Loading epigrams...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-10">
-              <p className="text-red-500">{error}</p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {epigrams.map((epigram) => (
-                <EpigramCard key={epigram.id} epigram={epigram} />
-              ))}
-            </div>
-          )}
-        </div>
-        
-        {/* Right Sidebar - Trending Topics */}
-        <div className="w-72 border-l pl-6 py-6 hidden lg:block">
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold flex items-center mb-4">
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Trending Topics
-              </h3>
-              <div className="space-y-3">
-                {trendingTopics.map((topic) => (
-                  <Card key={topic} className="overflow-hidden">
-                    <CardContent className="p-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">{topic}</span>
-                        <span className="text-xs text-muted-foreground">{topicFrequency[topic]} posts</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <LeftSidebar />
+        <EpigramFeed epigrams={epigrams} loading={loading} error={error} />
+        <RightSidebar trendingTopics={trendingTopics} topicFrequency={topicFrequency} />
       </div>
     </Layout>
   );
