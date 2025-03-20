@@ -20,6 +20,7 @@ setup:
 
 # Run backend with default configuration (FortuneLoader disabled)
 dev-backend:
+    docker-compose up -d
     cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 
 # Run backend with FortuneLoader enabled

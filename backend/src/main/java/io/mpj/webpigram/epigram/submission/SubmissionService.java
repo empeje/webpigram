@@ -1,18 +1,18 @@
 package io.mpj.webpigram.epigram.submission;
 
 import io.mpj.webpigram.config.CaptchaVerificationService;
-import io.mpj.webpigram.epigram.feeds.EpigramRepository;
+import io.mpj.webpigram.epigram.feeds.FeedsService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SubmissionService {
 
-  private final EpigramRepository epigramRepository;
+  private final FeedsService feedsService;
   private final CaptchaVerificationService captchaVerificationService;
 
   public SubmissionService(
-      EpigramRepository epigramRepository, CaptchaVerificationService captchaVerificationService) {
-    this.epigramRepository = epigramRepository;
+      FeedsService feedsService, CaptchaVerificationService captchaVerificationService) {
+    this.feedsService = feedsService;
     this.captchaVerificationService = captchaVerificationService;
   }
 
@@ -21,7 +21,7 @@ public class SubmissionService {
     captchaVerificationService.verifyRecaptchaIfEnabled(request.recaptchaToken(), "SUBMIT_EPIGRAM");
 
     // Create epigram
-    return epigramRepository.createEpigram(
+    return feedsService.createEpigram(
         request.content(), request.author(), request.getTopicsAsList());
   }
 }

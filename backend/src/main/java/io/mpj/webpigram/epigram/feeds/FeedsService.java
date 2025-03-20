@@ -23,6 +23,10 @@ public class FeedsService {
     return epigramRepository.getTrendingTopics();
   }
 
+  public long createEpigram(String content, String author, ImmutableList<String> topics) {
+    return epigramRepository.createEpigram(content, author, topics);
+  }
+
   public Feeds getRandomEpigram() {
     return epigramRepository.getRandomEpigram();
   }

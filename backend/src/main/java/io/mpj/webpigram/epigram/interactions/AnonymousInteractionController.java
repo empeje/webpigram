@@ -1,4 +1,4 @@
-package io.mpj.webpigram.epigram.anonymous;
+package io.mpj.webpigram.epigram.interactions;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
