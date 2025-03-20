@@ -1,3 +1,8 @@
+deploy-db:
+    cd db
+    fly deploy --image  docker-hub-mirror.fly.io/flyio/postgres-flex:17.2
+    cd -
+
 package-backend:
     cd backend && mvn clean package && cd -
 
