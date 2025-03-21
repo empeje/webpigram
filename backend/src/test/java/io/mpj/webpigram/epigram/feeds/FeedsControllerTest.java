@@ -28,7 +28,7 @@ final class FeedsControllerTest {
   @Test
   @DisplayName("Should return feed content when GET /feeds is called")
   void shouldReturnFeedContent() throws Exception {
-    // Given
+    // Arrange
     when(feedsService.getFeeds())
         .thenReturn(
             ImmutableList.of(
@@ -41,7 +41,7 @@ final class FeedsControllerTest {
                     LocalDateTime.parse("2025-03-16T21:41:50.873015"),
                     ImmutableList.of("Java", "Python", "C++"))));
 
-    // When & Then
+    // Act & Assert
     var expectedResponse =
         """
         [{"id":1,"content":"Hello","author":"John Doe","upVotes":10,"downVotes":5,"createdAt":"2025-03-16T21:41:50.873015","topics":["Java","Python","C++"]}]
@@ -54,6 +54,7 @@ final class FeedsControllerTest {
   }
 
   @Test
+  @DisplayName("Should return epigram content when GET /epigram/{id} is called")
   public void testGetEpigramById_Found() throws Exception {
     // Arrange
     long epigramId = 1L;
@@ -84,6 +85,7 @@ final class FeedsControllerTest {
   }
 
   @Test
+  @DisplayName("Should return 404 when GET /epigram/{id} is called and epigram not found")
   public void testGetEpigramById_NotFound() throws Exception {
     // Arrange
     long epigramId = 999L;

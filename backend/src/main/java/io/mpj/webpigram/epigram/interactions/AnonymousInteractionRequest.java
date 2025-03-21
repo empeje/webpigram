@@ -1,4 +1,4 @@
-package io.mpj.webpigram.epigram.anonymous;
+package io.mpj.webpigram.epigram.interactions;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

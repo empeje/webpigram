@@ -1,4 +1,4 @@
-package io.mpj.webpigram.epigram.anonymous;
+package io.mpj.webpigram.epigram.interactions;
 
 import java.util.Optional;
 
