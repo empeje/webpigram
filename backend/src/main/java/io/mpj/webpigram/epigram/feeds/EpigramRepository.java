@@ -24,7 +24,11 @@ public class EpigramRepository {
     this.dsl = dsl;
   }
 
-  // Get the first 10 epigrams sorted by popularity (upVotes - downVotes)
+  /**
+   * Get the top 10 epigrams sorted by popularity (upVotes - downVotes)
+   *
+   * @return a list of top 10 epigrams
+   */
   public ImmutableList<Feeds> getFeeds() {
     return dsl
         .selectFrom(Tables.EPIGRAM)
@@ -45,7 +49,13 @@ public class EpigramRepository {
         .collect(ImmutableList.toImmutableList());
   }
 
-  // Get paginated epigrams sorted by popularity (upVotes - downVotes)
+  /**
+   * Get paginated epigrams sorted by popularity (upVotes - downVotes)
+   *
+   * @param page page number
+   * @param pageSize number of epigrams per page
+   * @return a PagedFeeds object containing the epigrams for the given page and page size
+   */
   public PagedFeeds getPagedFeeds(int page, int pageSize) {
     var feeds =
         dsl
@@ -73,7 +83,11 @@ public class EpigramRepository {
     return new PagedFeeds(ImmutableList.copyOf(resultFeeds), page, pageSize, hasMore);
   }
 
-  // Get the top 5 trending topics based on epigram count and upvotes
+  /**
+   * Get the top 5 trending topics based on epigram count and upvotes
+   *
+   * @return a list of trending topics
+   */
   public ImmutableList<TrendingTopic> getTrendingTopics() {
     var epigramTopic = Tables.EPIGRAM_TOPIC;
     var epigram = Tables.EPIGRAM;
@@ -101,7 +115,12 @@ public class EpigramRepository {
         .collect(ImmutableList.toImmutableList());
   }
 
-  // Helper method to get topics for an epigram
+  /**
+   * Helper method to get topics for an epigram
+   *
+   * @param epigramId the ID of the epigram
+   * @return a list of topics for the epigram
+   */
   private ImmutableList<String> getTopicsForEpigram(long epigramId) {
     return dsl
         .selectFrom(Tables.EPIGRAM_TOPIC)
@@ -112,7 +131,14 @@ public class EpigramRepository {
         .collect(ImmutableList.toImmutableList());
   }
 
-  // Create a new epigram with the given content, author and topics
+  /**
+   * Create a new epigram with the given content, author and topics
+   *
+   * @param content the content of the epigram
+   * @param author the author of the epigram
+   * @param topics the topics associated with the epigram
+   * @return the ID of the newly created epigram
+   */
   public long createEpigram(String content, String author, ImmutableList<String> topics) {
     // Insert the epigram
     var epigramRecord = dsl.newRecord(Tables.EPIGRAM);
@@ -134,7 +160,11 @@ public class EpigramRepository {
     return epigramRecord.getId();
   }
 
-  // Get a random epigram
+  /**
+   * Get a random epigram
+   *
+   * @return a Feeds object representing the random epigram
+   */
   public Feeds getRandomEpigram() {
     var record =
         dsl.selectFrom(Tables.EPIGRAM).orderBy(rand()).limit(1).fetchOptional().orElseThrow();
@@ -149,7 +179,12 @@ public class EpigramRepository {
         getTopicsForEpigram(record.getId()));
   }
 
-  // Get an epigram by ID
+  /**
+   * Get an epigram by ID
+   *
+   * @param id the ID of the epigram
+   * @return a Feeds object representing the epigram with the given ID
+   */
   public Feeds getEpigramById(long id) {
     var record =
         dsl.selectFrom(Tables.EPIGRAM)
@@ -167,6 +202,12 @@ public class EpigramRepository {
         getTopicsForEpigram(record.getId()));
   }
 
+  /**
+   * Check if epigram exists
+   *
+   * @param id epigram id
+   * @return true if exists otherwise false
+   */
   public boolean epigramExists(long id) {
     return dsl.fetchExists(dsl.selectFrom(Tables.EPIGRAM).where(Tables.EPIGRAM.ID.eq(id)));
   }
